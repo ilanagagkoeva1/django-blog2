@@ -11,5 +11,8 @@ class CommentAdmin(admin.ModelAdmin):
     list_display = ('post', 'author', 'created', 'active')
     list_filter = ('active', 'created')
 
-admin.site.register(Profile)
+@admin.register(Profile)
+class ProfileAdmin(admin.ModelAdmin):
+    list_display = ('user',)
+
 admin.site.register(Like)

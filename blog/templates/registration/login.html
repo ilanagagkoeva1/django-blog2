@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Вход</h2>
+<form method="post">
+    {% csrf_token %}
+    <div>
+        <label for="username">Имя пользователя:</label>
+        <input type="text" name="username" id="username" required>
+    </div>
+    <div>
+        <label for="password">Пароль:</label>
+        <input type="password" name="password" id="password" required>
+    </div>
+    <button type="submit">Войти</button>
+</form>
+<p>Нет аккаунта? <a href="{% url 'blog:register' %}">Зарегистрироваться</a></p>
+{% endblock %}

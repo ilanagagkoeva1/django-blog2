@@ -15,8 +15,23 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-
+from django.urls import path, include # include для подключения маршрутов из приложений
+#для доступа к настройкам проекта
+from django.conf import settings
+#для работы с медиафайлами в режиме разработки
+from django.conf.urls.static import static
 urlpatterns = [
+    #путь к админ-панели
     path('admin/', admin.site.urls),
+    #путь ко всем маршрутам приложения blog, (примечание: после этого в папке blog создается файл urls.py
+    path('', include('blog.urls', namespace='blog')),
+    #namescape=blog , чтобы ссылаться на пути как blog:post_list
+ path('accounts/', include('django.contrib.auth.urls')), 
 ]
+
+#дополнительно для режима разработки    
+#загруженные пользователями файлы, мы будет раздавать через URL (ссылки)
+
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
