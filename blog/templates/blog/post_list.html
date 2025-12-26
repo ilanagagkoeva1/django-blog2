@@ -2,8 +2,24 @@
 {% block content %}
 
 <h1>Все посты блога</h1>
+
 {% if posts %}
-    #TODO: Посты блога
+    {% for post in posts %}
+        <div style="border: 1px solid #ccc; padding: 15px; margin: 20px 0;">
+            <h2><a href="{% url 'blog:post_detail' post.slug %}">{{ post.title }}</a></h2>
+            
+            {% if post.image %}
+                <img src="{{ post.image.url }}" alt="{{ post.title }}" style="max-width: 300px;">
+            {% endif %}
+            
+            <p><strong>Автор:</strong> {{ post.author.username }}</p>
+            <p><strong>Дата:</strong> {{ post.created|date:"d.m.Y H:i" }}</p>
+            
+            <p>{{ post.body|truncatewords:30 }}</p>
+            
+            <a href="{% url 'blog:post_detail' post.slug %}">Читать далее</a>
+        </div>
+    {% endfor %}
 {% else %}
     <p>Нет постов</p>
 {% endif %}

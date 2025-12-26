@@ -13,8 +13,13 @@
             <div class="auth__links">
                 <!-- Если уже зашел -->
                 {% if user.is_authenticated %}
-                <a href="{% url 'logout' %}">Выйти</a>
 
+                <form method="post" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit">
+                        Выйти
+                    </button>
+                </form>
                  <!-- Если не вошел в аккаунт -->
                 {% else %}
                     <a href="{% url 'login' %}">Войти</a>

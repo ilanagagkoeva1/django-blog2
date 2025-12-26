@@ -94,3 +94,4 @@ def register(request): #создаем метод для формы регист
         form = RegisterForm() #или если он повторно зашел
     #показываем страницу регистрации с пустой формой или с ошибками
     return render(request, 'blog/register.html', {'form': form})
+

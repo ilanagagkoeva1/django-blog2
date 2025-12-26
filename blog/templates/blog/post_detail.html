@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<a href="{% url 'blog:post_list' %}">Назад к постам</a>
+<div class="post-detail">
+    <h1 class="post-detail__h1">{{post.title}}</h1>
+    {% if post.image %}
+                <img src="{{ post.image.url }}" alt="{{ post.title }}" style="max-width: 300px;">
+            {% endif %}
+    <p class="post-detail__text">
+        {{post.body|linebreaks}}
+    </p>
+
+     <p><strong>Автор:</strong> {{ post.author.username }}</p>
+    <p><strong>Дата:</strong> {{ post.created|date:"d.m.Y H:i" }}</p>
+</div>
+<h3>Комментарии: {{post.comments.count}}</h3>
+{% if user.is_authenticated %}
+<form action="{% url 'blog:like_post' post.slug %}">
+        {% csrf_token %}
+        <button type="submit">
+            ❤️ 
+            <span>{{post.likes.count}}</span>
+        </button>
+
+</form>
+
+<!-- Бонус: Добавить возможность лайкать комментарии -->
+<form method="post">
+    {% csrf_token %}
+    <textarea name="body" placeholder="Введите свой комментарий...">
+    </textarea>
+    <button type="submit">Отправить</button>
+</form>
+{% else %}
+<p>Войдите, чтобы ставить лайки и оставлять комментарии</p>
+{% endif %}
+{% for comment in post.comments.all %}
+{% if comment.active %}
+<div class="comment">
+    <!-- Видны фото профиля -->
+    <!-- Добавиь возможность изменить удалить свой комментарий 
+     и модерация , не сразу публикация, а модерировать и одобрять -->
+<h4>{{comment.author.username}}</h4>
+<p>{{comment.created}}</p>
+<p>{{comment.body|linebreaks}}</p>
+
+</div>
+{% endif %}
+{% empty %}
+<p>Пока нет комментариев. Будь первым!</p>
+{% endfor %}
+{% endblock %}

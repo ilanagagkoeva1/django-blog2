@@ -22,11 +22,11 @@ from django.conf import settings
 from django.conf.urls.static import static
 urlpatterns = [
     #путь к админ-панели
-    path('admin/', admin.site.urls),
+    path('admin', admin.site.urls),
     #путь ко всем маршрутам приложения blog, (примечание: после этого в папке blog создается файл urls.py
     path('', include('blog.urls', namespace='blog')),
     #namescape=blog , чтобы ссылаться на пути как blog:post_list
- path('accounts/', include('django.contrib.auth.urls')), 
+ path('accounts', include('django.contrib.auth.urls')), 
 ]
 
 #дополнительно для режима разработки    
