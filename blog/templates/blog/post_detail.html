@@ -39,12 +39,18 @@
 {% if comment.active %}
 <div class="comment">
     <!-- Видны фото профиля -->
-    <!-- Добавиь возможность изменить удалить свой комментарий 
+     {% if comment.author.profile.avatar %}
+        <img src="{{comment.author.profile.avatar.url}}" alt="avatar" width="40">
+     {% endif%}
+    <!--  Добавиь возможность изменить удалить свой комментарий 
      и модерация , не сразу публикация, а модерировать и одобрять -->
 <h4>{{comment.author.username}}</h4>
 <p>{{comment.created}}</p>
 <p>{{comment.body|linebreaks}}</p>
-
+{% if user == comment.author %}
+    <a href="{% url 'blog:delete_comment' comment.id %}" onclick="return confirm('Удалить комментарий?')">
+        Удалить</a>
+{% endif %}
 </div>
 {% endif %}
 {% empty %}

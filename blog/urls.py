@@ -17,6 +17,7 @@ path('post/<slug:slug>/like/', views.like_post, name='like_post'),
 path('accounts', include('django.contrib.auth.urls')),
 #django.contrib.auth.urls - набор стандартный путей от модуля django
 path('register/', views.register, name='register'),
+path('comment/<int:pk>/delete/', views.delete_comment, name="delete_comment")
 ]
 
 

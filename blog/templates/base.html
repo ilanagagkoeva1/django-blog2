@@ -30,6 +30,15 @@
         </nav>
     </header>
     <main>
+        {% if messages %}
+                                                                                                                                                        <div class="messages" >
+                                                                                                                                                            {% for m in messages %}
+                                                                                                                                                                <p class="messages__text {{m.tags}}">
+                                                                                                                                                                    {{m}}
+                                                                                                                                                                </p>
+                                                                                                                                                            {% endfor %}
+            </div>
+        {% endif %}
         {% block content %}
         {% endblock %}
     </main>

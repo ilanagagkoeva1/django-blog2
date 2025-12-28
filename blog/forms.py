@@ -11,7 +11,7 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment #какая из наших моделей будет использоваться
         fields = ('body',)
-
+        
 class RegisterForm(UserCreationForm):
     email = forms.EmailField(required=True)
 

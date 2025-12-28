@@ -15,7 +15,8 @@ from django.contrib.auth.models import User
 #импорт модели Пользователя
 from django.contrib.auth.forms import UserCreationForm
 #импорт стандартной формы для регистрации
-
+from django.contrib import messages 
+# модуль для вывода сообщений пользователю
 def post_list(request):
     posts = Post.objects.filter(published=True)
     #получаем из базы все посты, которые опубликованы
@@ -47,6 +48,8 @@ def post_detail(request, slug):
             comment.save() #сохраняем в базу
             #возвращаем пользователя обратно, чтобы избежать
             #дублирования комментариев (повторной отправки формы)
+            messages.success(request, "Ваш комментарий на модерации") 
+
             return redirect('blog:post_detail', slug=post.slug)
     else:
         #если GET-запрос, то создаем пустую форму (сбрасываем данные)
@@ -94,4 +97,15 @@ def register(request): #создаем метод для формы регист
         form = RegisterForm() #или если он повторно зашел
     #показываем страницу регистрации с пустой формой или с ошибками
     return render(request, 'blog/register.html', {'form': form})
+# Функция для вывода сообщения после отправки формы и проверки данных
+
+
+
+
+@login_required
+def delete_comment(request, pk):
+    comment = get_object_or_404(Comment, pk=pk, author=request.user)
+    post_slug = comment.post.slug
+    comment.delete()
+    return redirect('blog:post_detail', slug=post_slug)
 

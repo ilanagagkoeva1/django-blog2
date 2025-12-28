@@ -30,8 +30,8 @@ class Comment(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     body = models.TextField()
     created = models.DateTimeField(default=timezone.now)
-    active = models.BooleanField(default=True)
-
+    active = models.BooleanField(default=False)
+    # likes = models.ManyToManyField()
     class Meta:
         ordering = ['created']
 
