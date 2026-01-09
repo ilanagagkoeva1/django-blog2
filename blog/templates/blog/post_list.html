@@ -2,7 +2,9 @@
 {% block content %}
 
 <h1>Все посты блога</h1>
-
+<form method="get">
+    <input type="text">
+</form>
 {% if posts %}
     {% for post in posts %}
         <div style="border: 1px solid #ccc; padding: 15px; margin: 20px 0;">

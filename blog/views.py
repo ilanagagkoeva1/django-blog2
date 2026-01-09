@@ -17,13 +17,20 @@ from django.contrib.auth.forms import UserCreationForm
 #импорт стандартной формы для регистрации
 from django.contrib import messages 
 # модуль для вывода сообщений пользователю
+from django.db.models import Q
+
 def post_list(request):
     posts = Post.objects.filter(published=True)
     #получаем из базы все посты, которые опубликованы
     #черновики игнорируем
     #третий аргумент - словарь, где хранятся данные доступные в HTML
-
-    return render(request, 'blog/post_list.html', {'posts': posts})
+    query = request.GET.get('q')
+    if query:
+        posts = posts.filter(
+            Q(title__icontains=query) | 
+            Q(body__icontains=query)
+        )
+    return render(request, 'blog/post_list.html', {'posts': posts, 'query': query})
 # Create your views here.
 def post_detail(request, slug):
     post = get_object_or_404(Post, slug=slug, published=True)
@@ -91,7 +98,7 @@ def register(request): #создаем метод для формы регист
             user = form.save() #сохраняем пользователя в базу
             login(request, user) #сразу выполняем за него вход
             #чтобы ему не пришлось это делать вручную
-            return redirect('blog:post_list')
+            return redirect('blog:edit_profile')
             #перенеправляем на главную страницу
     else: #иначе - если он просто зашел на страницу, форма должна быть пустой
         form = RegisterForm() #или если он повторно зашел
@@ -108,4 +115,37 @@ def delete_comment(request, pk):
     post_slug = comment.post.slug
     comment.delete()
     return redirect('blog:post_detail', slug=post_slug)
+
+@login_required #только для тех, кто вошел в аккаунт
+def like_comment(request, pk): #добавляем функцию, т.е. возможность ставить лайки
+    comment = get_object_or_404(Comment, pk=pk) #получаем комментарий на который
+    # ставят лайк
+    if request.user != comment.author: #если это чужой комментарий, не его
+        if request.user in comment.likes.all(): #смотрим, он уже ставил лайк или нет?
+            comment.likes.remove(request.user) #удаляем его лайк
+        else: #если еще не ставил лайк
+            comment.likes.add(request.user) #то добавляем его во множество
+    return redirect('blog:post_detail', slug=comment.post.slug) 
+    #возвращаемся на ту же самую страницу
+
+from .forms import ProfileForm
+@login_required
+def edit_profile(request):
+    profile = request.user.profile
+    if request.method == "POST":
+        form = ProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            if request.FILES.get('avatar'):
+                print("Имя файла:", request.FILES['avatar'].name)
+            form.save()
+            profile.refresh_from_db()
+            print("ПУТЬ:", profile.avatar.path)
+            return redirect('blog:dashboard')
+    else:
+        form = ProfileForm(instance=profile)
+    return render(request, 'blog/edit_profile.html', {'form': form})
+
+@login_required
+def dashboard(request):
+    return render(request, 'blog/dashboard.html')
 

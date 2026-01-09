@@ -31,9 +31,9 @@ class Comment(models.Model):
     body = models.TextField()
     created = models.DateTimeField(default=timezone.now)
     active = models.BooleanField(default=False)
-    # likes = models.ManyToManyField()
+    likes = models.ManyToManyField(User, related_name="liked_comments", blank=True)
     class Meta:
-        ordering = ['created']
+        ordering = ['-created']
 
     def __str__(self):
         return f'Comment by {self.author} on {self.post}'
