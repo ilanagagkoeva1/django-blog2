@@ -3,7 +3,9 @@
 
 <h1>Все посты блога</h1>
 <form method="get">
-    <input type="text">
+    <input type="text" placeholder="Поиск по постам..." name="q" value="{{request.GET.q}}">
+    <button type="submit">Искать</button>
+    <a href="{% url 'blog:post_list' %}">Сбросить</a>
 </form>
 {% if posts %}
     {% for post in posts %}

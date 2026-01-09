@@ -25,6 +25,8 @@ def post_list(request):
     #черновики игнорируем
     #третий аргумент - словарь, где хранятся данные доступные в HTML
     query = request.GET.get('q')
+    # query = query.lower()
+    # Поправить поиск с учетом регистра
     if query:
         posts = posts.filter(
             Q(title__icontains=query) | 
@@ -80,14 +82,13 @@ def like_post(request, slug):
         liked = False
     else:
         liked = True
-    #request.headers - заголовок запроса, где хранится информация о типе запроса
-    #если запрос AJAX, асинхронный, то возвращаем JSON
-    #'X-Request-With' - значит страницу мы не обновляем, при действии которое делаем
-    #JsonResponse - преобразует словарь в формат json
-    #liked - boolean, true - если лайк поставлен, false - если лайк удален
-    #likes_count - количество лайков c помощью функции count()
-    if request.headers.get('X-Request-With') == 'XMLHttpRequest':
-        return JsonResponse({'liked': liked, 'likes_count': post.likes.count()})    
+
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return JsonResponse({
+            'liked': liked,
+            'likes_count': post.likes.count()
+        })
+
     return redirect('blog:post_detail', slug=slug)
 
 #TODO: для формы регистрации
@@ -122,9 +123,17 @@ def like_comment(request, pk): #добавляем функцию, т.е. воз
     # ставят лайк
     if request.user != comment.author: #если это чужой комментарий, не его
         if request.user in comment.likes.all(): #смотрим, он уже ставил лайк или нет?
-            comment.likes.remove(request.user) #удаляем его лайк
+            comment.likes.remove(request.user)
+            liked = False #удаляем его лайк
         else: #если еще не ставил лайк
-            comment.likes.add(request.user) #то добавляем его во множество
+            comment.likes.add(request.user)
+            liked = True #то добавляем его во множество
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return JsonResponse({
+            'liked': liked,
+            'likes_count': comment.likes.count()
+        })
+    
     return redirect('blog:post_detail', slug=comment.post.slug) 
     #возвращаемся на ту же самую страницу
 
